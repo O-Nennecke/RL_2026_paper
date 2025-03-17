@@ -1,5 +1,5 @@
 from datetime import datetime
-import config
+import Functions.config as config
 
 
 def set_global_attributes(dataset, source, grid="gaussian n80", area="EU13+2"):
@@ -63,28 +63,6 @@ def set_demand_attributes(dataset):
     )
     return dataset
 
-# def set_energy_attributes(dataset, Etype):
-#     dataset.demand.attrs.update(
-#         standard_name = Etype + ' production',
-#         long_name = Etype + ' production',
-#         units = 'MWh',
-#     )
-#     return dataset
-
-# def set_hydro_attributes(ds):
-#     attrs = {
-#         'netto_demand': ['netto demand', 'demand with PV solar and wind production subtracted'],
-#         'reservoir': ['reservoir storage', 'energy stored in reservoirs at timestep'],
-#         'Ein': ['inflow into reservoir', 'inflow into reservoir, considering maximum storage (so overflow)'],
-#         'Eout': ['hydro energy production', 'production of reservoir hydro energy']
-#     }
-#     for v in ds:
-#         ds[v].attrs.update(
-#             standard_name = attrs[v][0],
-#             long_name =  attrs[v][1],
-#             units = 'MWh'
-#         )
-#     return ds
 
 
 def update_energy_attributes(

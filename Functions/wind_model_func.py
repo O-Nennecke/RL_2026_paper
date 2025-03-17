@@ -1,16 +1,12 @@
 import xarray as xr
-import config
-import attributes
+import Functions.config as config
+# import Old_Code.attributes_old as attributes_old
 
-# default values
-v_cutin0 = 3.5  # cut-in wind speed [m/s]
-v_rated0 = 13  # rated wind speed [m/s]
-v_cutout0 = 25  # 25   		# cut_out wind speed [m/s]
 
 # =============================================================================
 # Wind modules
 # =============================================================================
-def _wind_scale(wind_at_ref_height, hub_height, surface_roughness, reference_height=10):
+def _wind_scale(wind_at_ref_height, hub_height, surface_roughness, reference_height = config.height_ref):
     """
     Scales wind at reference height to wind at hub_height with a power law profile.
 
@@ -32,7 +28,7 @@ def _wind_scale(wind_at_ref_height, hub_height, surface_roughness, reference_hei
     return wind_at_hub_height
 
 
-def _wind_power_curve(wind_at_hub_height, v_cutin = v_cutin0, v_rated = v_rated0, v_cutout = v_cutout0):
+def _wind_power_curve(wind_at_hub_height, v_cutin = config.v_cutin0, v_rated = config.v_rated0, v_cutout = config.v_cutout0):
     """
     Computes wind energy potential with a powercurve based on wind speed at hub height.
 
@@ -64,9 +60,9 @@ def compute_wind_energy_potential(
     hub_height,
     surface_roughness,
     reference_height=config.height_ref,
-    v_cutin=v_cutin0,
-    v_rated=v_rated0,
-    v_cutout=v_cutout0,
+    v_cutin=config.v_cutin0,
+    v_rated=config.v_rated0,
+    v_cutout=config.v_cutout0,
     energy_type="wind",
     unit="[0-1]",
 ):
@@ -96,9 +92,9 @@ def compute_wind_energy_potential(
     )
     wind_energy_pot = _wind_power_curve(wind_scaled, v_cutin, v_rated, v_cutout)
     
-    wind_energy_pot = attributes.update_energy_attributes(
-        wind_energy_pot, energy_type, unit, potential=True
-    )
+    # wind_energy_pot = attributes.update_energy_attributes(
+    #     wind_energy_pot, energy_type, unit, potential=True
+    # )
     
     wind_energy_pot = wind_energy_pot.rename_vars({list(wind_energy_pot.data_vars)[0]: (list(wind_energy_pot.data_vars)[0][:-10] + 'pot')})
 
@@ -145,9 +141,9 @@ def compute_wind_energy_production(
 
     wind_energy_prod = wind_energy_cf * spatial_distribution
 
-    wind_energy_prod = attributes.update_energy_attributes(
-        wind_energy_prod, energy_type, unit
-    )
+    # wind_energy_prod = attributes.update_energy_attributes(
+    #     wind_energy_prod, energy_type, unit
+    # )
     
     wind_energy_prod = wind_energy_prod.rename_vars({list(wind_energy_prod.data_vars)[0]: (list(wind_energy_prod.data_vars)[0][:-3] + 'prod')})
 

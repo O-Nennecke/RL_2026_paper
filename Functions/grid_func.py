@@ -1,6 +1,8 @@
 import xarray as xr
 import numpy as np
+import xesmf as xe
 
+# Function to create a reference grid of 1x1 degree over Germany
 def create_ref_grid(variable_name):
     # Create reference grid
     lats = np.arange(47, 57)    # Latitude
@@ -26,3 +28,10 @@ def create_ref_grid(variable_name):
     grid['lat'].attrs['standard_name'] = 'latitude'
     grid['lon'].attrs['standard_name'] = 'longitude'
     return grid
+
+# Function to regrid the dataset to the reference grid
+def regrid(ds):
+    new_grid = create_ref_grid('new_grid')
+    regridder = xe.Regridder(ds, new_grid, 'bilinear')
+    ds = regridder(ds)
+    return ds

@@ -1,9 +1,8 @@
 import xarray as xr
 import numpy as np
-import config
 
-from constants.constant import PI, KELVIN
-import attributes
+import Functions.config as config
+# import Old_Code.attributes_old as attributes_old
 
 
 # =============================================================================
@@ -34,14 +33,14 @@ def _day_length(data, shift_doy=config.shift_doy):
         )
     )
 
-    arg = (np.sin(p * PI / 180) + np.sin(lat * PI / 180) * np.sin(P)) / (
-        np.cos(lat * PI / 180) * np.cos(P)
+    arg = (np.sin(p * np.pi / 180) + np.sin(lat * np.pi / 180) * np.sin(P)) / (
+        np.cos(lat * np.pi / 180) * np.cos(P)
     )
 
     arg = xr.where(arg < -1, -1, arg)
     arg = xr.where(arg > 1, 1, arg)
 
-    daylight_hours = 24 - 24 / PI * np.arccos(arg)
+    daylight_hours = 24 - 24 / np.pi * np.arccos(arg)
 
     return daylight_hours
 
@@ -171,9 +170,9 @@ def compute_solar_energy_potential(
         performance_ratio, radiation_day, standard_radiation
     )
 
-    solar_energy_pot = attributes.update_energy_attributes(
-        solar_energy_pot, energy_type, unit, potential=True
-    )
+    # solar_energy_pot = attributes.update_energy_attributes(
+    #     solar_energy_pot, energy_type, unit, potential=True
+    # )
 
     return solar_energy_pot
 
@@ -214,8 +213,8 @@ def compute_solar_energy_production(
 
     solar_energy_prod = solar_energy_cf * spatial_distribution
     # update attributes
-    solar_energy_prod = attributes.update_energy_attributes(
-        solar_energy_prod, energy_type, unit
-    )
+    # solar_energy_prod = attributes.update_energy_attributes(
+    #     solar_energy_prod, energy_type, unit
+    # )
 
     return solar_energy_prod
