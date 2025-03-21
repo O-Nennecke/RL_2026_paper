@@ -2,6 +2,10 @@ import xarray as xr
 import numpy as np
 import xesmf as xe
 
+# Preprocess function to apply spatial filter directly at load time
+def preprocess(ds):
+    return ds.sel(lat=slice(45, 60), lon=slice(5, 17))
+
 # Function to create a reference grid of 1x1 degree over Germany
 def create_ref_grid(variable_name):
     # Create reference grid

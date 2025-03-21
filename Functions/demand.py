@@ -54,5 +54,5 @@ def compute_demand(ds, ds_fitvalues, varin="temp", varout="demand"):
         ds_fitvalues.cooling_max,
         ds[varout],
     )
-    ds = attributes_old.set_demand_attributes(ds)
+    # ds = attributes_old.set_demand_attributes(ds)
     return ds
