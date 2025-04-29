@@ -3,8 +3,8 @@ import numpy as np
 import xesmf as xe
 
 # Preprocess function to apply spatial filter directly at load time
-def preprocess(ds):
-    return ds.sel(lat=slice(45, 60), lon=slice(5, 17))
+def preprocess(ds, s = 45, n = 60, w = 5, e = 17):
+    return ds.sel(lat=slice(s, n), lon=slice(w, e))
 
 # Function to create a reference grid of 1x1 degree over Germany
 def create_ref_grid(variable_name):
