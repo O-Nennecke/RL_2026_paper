@@ -3,14 +3,48 @@ import numpy as np
 import xesmf as xe
 
 # Preprocess function to apply spatial filter directly at load time
+# def preprocess(ds, s = 45, n = 60, w = 4, e = 17):
+#     return ds.sel(lat=slice(s, n), lon=slice(w, e))
 def preprocess(ds, s = 45, n = 60, w = 4, e = 17):
-    return ds.sel(lat=slice(s, n), lon=slice(w, e))
+    if e < w:
+        part1 = ds.sel(lon=slice(w, 360))
+        part2 = ds.sel(lon=slice(0, e))
+        europe = xr.concat([part1, part2], dim="lon")
+        ds = europe.sel(lat=slice(s, n))
+    else:
+        ds = ds.sel(lat=slice(s, n), lon=slice(w, e))
+    return ds
+
+
+def preprocess_psl(ds, s = 25, n = 75, w = 335, e = 35):
+    if e < w:
+        part1 = ds.sel(lon=slice(w, 360))
+        part2 = ds.sel(lon=slice(0, e))
+        europe = xr.concat([part1, part2], dim="lon")
+        ds = europe.sel(lat=slice(s, n))
+    else:
+        ds = ds.sel(lat=slice(s, n), lon=slice(w, e))
+    return ds
+
+def preprocess_ERA5_psl(ds, s = 25, n = 75, w = 335, e = 35):
+    ds = ds.reindex(lat=ds.lat[::-1])
+    if e < w:
+        part1 = ds.sel(lon=slice(w, 360))
+        part2 = ds.sel(lon=slice(0, e))
+        europe = xr.concat([part1, part2], dim="lon")
+        ds = europe.sel(lat=slice(s, n))
+    else:
+        ds = ds.sel(lat=slice(s, n), lon=slice(w, e))
+    return ds
 
 # Function to create a reference grid of 1x1 degree over Germany
-def create_ref_grid(variable_name, s = 47, n = 57, w = 5, e = 17):
+def create_ref_grid(variable_name, s = 47, n = 56, w = 6, e = 16):
     # Create reference grid
     lats = np.arange(s, n)    # Latitude
-    lons = np.arange(w, e)     # Longitude
+    if e < w:
+        lons = np.concatenate([np.arange(w, 360), np.arange(0, e)]) # Longitude
+    else:
+        lons = np.arange(w, e)     # Longitude
 
     # Initialize values for the empty grid (with NaN)
     data = np.full((len(lats), len(lons)), np.nan)
@@ -34,7 +68,7 @@ def create_ref_grid(variable_name, s = 47, n = 57, w = 5, e = 17):
     return grid
 
 # Function to regrid the dataset to the reference grid
-def regrid(ds, s = 47, n = 57, w = 5, e = 17):
+def regrid(ds, s = 47, n = 56, w = 6, e = 16):
     new_grid = create_ref_grid('new_grid', s = s, n = n, w = w, e = e)
     regridder = xe.Regridder(ds, new_grid, 'bilinear')
     ds = regridder(ds)
