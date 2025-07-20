@@ -18,7 +18,8 @@ pv_constants = [cT_c1, cT_c2, cT_c3, cT_c4]
 # settings for wind
 # =============================================================================
 
-height_ref = 10.0  # height of available wind data [m]
+height_ref = 100.0  # height of available wind data [m]
+height_ref_ERA5 = 100.0  # height of available wind data ERA5 [m]
 time_oper = 24  # operational time of hub [h/day]
 
 v_cutin0 = 3.5  # cut-in wind speed [m/s]

@@ -1,6 +1,5 @@
-Bias_analysis/log/
-Bias_analysis/bc_plots/
-
+Var_Preprocessing_and_Bias_analysis/log/
+Var_Preprocessing_and_Bias_analysis/bc_plots/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

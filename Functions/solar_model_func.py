@@ -2,6 +2,7 @@ import xarray as xr
 import numpy as np
 
 import Functions.config as config
+import Functions.wind_model_func as wind_model_func
 # import Old_Code.attributes_old as attributes_old
 
 
@@ -45,7 +46,7 @@ def _day_length(data, shift_doy=config.shift_doy):
     return daylight_hours
 
 
-def _solar_cell_temp(radiation, temp_at_sfc, temp_at_sfc_max, surface_wind, constants):
+def _solar_cell_temp(radiation, temp_at_sfc, temp_at_sfc_max, wind, constants):
     """
     Computes solar cell temperature
 
@@ -62,6 +63,8 @@ def _solar_cell_temp(radiation, temp_at_sfc, temp_at_sfc_max, surface_wind, cons
     cell_temperature (xarray.DataArray): temperature of the cell [degC]
     """
     daily_temp_2m = (temp_at_sfc + temp_at_sfc_max) / 2
+    
+    surface_wind = wind_model_func._wind_scale(wind, 10, config.a_onshore, 100)
 
     cell_temperature = (
         constants[0]
