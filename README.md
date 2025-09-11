@@ -16,7 +16,7 @@ The complete thesis is available on request from the author.
 3. Download fit and population data from vdW
 4. Run files in SEM_Preparation folder
 5. Run SEM_application.ipynb
-6. Run fix_time_format.ipynb
+6. Run 
 7. Run LEE_Detection
 
 

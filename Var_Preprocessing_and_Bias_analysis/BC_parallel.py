@@ -14,7 +14,7 @@
 
 # Output data:
 
-#     - This file lies here: /climca/people/onennecke/not_debiased_data/
+#     - This file lies here: /climca/people/onennecke/debiased_data/
 ###################################################################################
 
 
