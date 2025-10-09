@@ -1,0 +1,16 @@
+name: env_ma_on
+channels:
+  - defaults
+dependencies:
+  - xarray
+  - netcdf4
+  - matplotlib
+  - cartopy
+  - dask
+  - seaborn
+  - python-cdo
+  - xesmf
+  - ipykernel
+  - geopandas
+  - nc-time-axis
+  - esmvalcore
