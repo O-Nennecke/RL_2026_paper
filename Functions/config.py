@@ -39,3 +39,27 @@ a_offshore = 0.11  # offshore roughness energy_type [-]
 
 # height_onshore = 90.0  # height onshore wind turbines [m]
 # height_offshore = 110.0  # height offshore wind turbines [m]
+
+
+
+# =============================================================================
+# Parts of this code are adapted from: 
+# Van der Most, L., Van der Wiel, K., Benders, R. M. J., Gerbens-Leenes, P. W., Kerkmans, P., & Bintanja, R. (2022). 
+# Extreme events in the European renewable power system: Validation of a modeling framework to estimate renewable electricity 
+# production and demand from meteorological data. Renewable and Sustainable Energy Reviews, 170(112987). https://doi.org/10.1016/j.rser.2022.112987
+
+
+# MIT License
+
+# Copyright (c) 2022 Lieke van der Most
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+# to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+# and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# =============================================================================

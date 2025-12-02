@@ -1,3 +1,5 @@
+# Script to download Surface Solar Radiation Downwards (SSRD) data from ERA5 reanalysis
+
 import cdsapi
 import os
 import sys

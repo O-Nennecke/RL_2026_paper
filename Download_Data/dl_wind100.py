@@ -1,5 +1,6 @@
-import cdsapi
+# Script to download 100m wind component data from ERA5 reanalysis
 
+import cdsapi
 import sys
 
 year = sys.argv[1]
