@@ -41,6 +41,73 @@ a_offshore = 0.11  # offshore roughness energy_type [-]
 # height_offshore = 110.0  # height offshore wind turbines [m]
 
 
+# =============================================================================
+# settings for solar optimized unbounded
+# =============================================================================
+# solar PV
+cT_c1_unb = 5.96473933e+01  # constant [dC]
+cT_c2_unb = 5.42857790e-01  # constant [-]
+cT_c3_unb = 8.64680503e-03  # constant [dC m2 W-1]
+cT_c4_unb = 4.59579472e+00  # constant [dC s m-1]
+gamma_unb = -2.40438135e-03  # constant [--]
+temp_ref_unb = -3.03472531e+01  # reference temperature [dC]
+
+pv_constants_unb = [cT_c1_unb, cT_c2_unb, cT_c3_unb, cT_c4_unb]
+
+# =============================================================================
+# settings for solar optimized bounded
+# =============================================================================
+# solar PV
+cT_c1_bnd = 4.3  # constant [dC]
+cT_c2_bnd = 0.943  # constant [-]
+cT_c3_bnd = 0.028  # constant [dC m2 W-1]
+cT_c4_bnd = -1.528  # constant [dC s m-1]
+gamma_bnd = -0.005  # constant [--]
+temp_ref_bnd = 25  # reference temperature [dC]
+
+pv_constants_bnd = [cT_c1_bnd, cT_c2_bnd, cT_c3_bnd, cT_c4_bnd]
+
+# =============================================================================
+# settings for onshore wind optimized weighted
+# =============================================================================
+
+v_cutin0_on_weighted = 2.29954722e-03  # cut-in wind speed [m/s]
+v_rated0_on_weighted = 1.14878780e+01   # rated wind speed [m/s]
+v_cutout0_on_weighted = 2.50000000e+01  # cut_out wind speed [m/s]
+
+# =============================================================================
+# settings for onshore wind optimized unbounded
+# =============================================================================
+
+v_cutin0_on_unb = -5.45886355  # cut-in wind speed [m/s]
+v_rated0_on_unb = 12.73255494   # rated wind speed [m/s]
+v_cutout0_on_unb = 25  # cut_out wind speed [m/s]
+
+# =============================================================================
+# settings for onshore wind optimized bounded
+# =============================================================================
+
+v_cutin0_on_bnd = 1.00792814e-02  # cut-in wind speed [m/s]
+v_rated0_on_bnd = 1.18018132e+01   # rated wind speed [m/s]
+v_cutout0_on_bnd = 2.50000000e+01  # cut_out wind speed [m/s]
+
+# =============================================================================
+# settings for offshore wind optimized unbounded
+# =============================================================================
+
+v_cutin0_off_unb = 8.39701209e-03  # cut-in wind speed [m/s]
+v_rated0_off_unb = 1.41507522e+01   # rated wind speed [m/s]
+v_cutout0_off_unb = 2.50000000e+01  # cut_out wind speed [m/s]
+
+# =============================================================================
+# settings for offshore wind optimized bounded
+# =============================================================================
+
+v_cutin0_off_bnd = 8.39701209e-03  # cut-in wind speed [m/s]
+v_rated0_off_bnd = 1.41507522e+01   # rated wind speed [m/s]
+v_cutout0_off_bnd = 2.50000000e+01  # cut_out wind speed [m/s]
+
+
 
 # =============================================================================
 # Parts of this code are adapted from: 

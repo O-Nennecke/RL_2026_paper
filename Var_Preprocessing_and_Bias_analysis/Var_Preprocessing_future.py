@@ -1,0 +1,199 @@
+###################################################################################
+# Title: Var_Preprocessing_future.py
+
+# Purpose: Preprocess CMIP6 data: Regrid, Spatial and temporal selection, change calendar, and save to netCDF files.
+
+# Author: Onno Nennecke on 03.06.2025 Modified: 09.02.2026
+
+# Input data: 
+
+#     - warming_year data lies here: /home/onennecke/CMIP_models/warming_thresholds.csv
+#     - CMIP6 data lies here: /climca/data/CMIP6
+#     - CMIP6 runs are defined in the csv file: /home/onennecke/CMIP_models/CMIP6_runs.csv
+#     - Alpha mask for rescaling wind speed lies here: /home/onennecke/Capacity_data/alpha_land_sea.nc
+
+# Output data:
+
+#     - This file lies here: /climca/people/onennecke/not_debiased_data_future/
+###################################################################################
+
+
+# Importing libraries
+import xarray as xr
+import numpy as np
+import pandas as pd
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+import os
+import glob
+import cftime
+import time
+import re
+import multiprocessing
+
+
+
+# Importing functions
+import Functions.grid_func as grid_func
+import Functions.wind_model_func as wind_model_func
+
+
+# Import alpha mask for rescaling wind speed
+alpha_mask = xr.open_dataset('/home/onennecke/Capacity_data/alpha_land_sea.nc')
+
+# Read the dataframe from the csv file
+df = pd.read_csv('/home/onennecke/CMIP_models/CMIP6_runs_future.csv')
+
+# Change the ref column to 1 for the first instance of each model
+df['Ref'] = df.groupby(['ESM', 'Institution']).cumcount().apply(lambda x: 1 if x == 0 else 0)
+
+# Load climate data
+
+MIP = 'ScenarioMIP' # CMIP
+
+scenario = 'ssp370'
+time_res = 'day'
+variables = ['sfcWind', 'rsds', 'tas', 'tasmax'] # List of variables
+# variables = ['sfcWind', 'rsds', 'tas', 'tasmax', 'psl'] # List of variables
+
+grid_def = '*'
+version = '*'
+
+# Read warming thresholds for each model
+warming_thresholds = pd.read_csv('/home/onennecke/CMIP_models/warming_thresholds.csv')
+# warming_thresholds
+
+# for i in range(len(df[0:2])):
+def one_run(i):
+    run_time = time.time()
+    ESM = df['ESM'][i]
+    Inst = df['Institution'][i]
+    run = df['run'][i]
+    ESM_run = f'{ESM}_{run}'
+    print(f'Processing Run Nr. {i+1}, {ESM}, {Inst}, {run}, \n')
+
+    middle_year = warming_thresholds.loc[warming_thresholds["ESM"] == ESM,"Year_reached_2C"].item()
+    start_year = middle_year - 5
+    end_year = middle_year + 4
+    # print(f"Selected time period for {ESM}: {start_year} - {end_year}")
+
+    time_range = pd.date_range(start=f'{start_year}-01-01', end=f'{end_year}-12-31', freq='D')
+
+    time_range = time_range[~((time_range.month == 2) & (time_range.day == 29))]
+
+    new_time = xr.DataArray(time_range, dims='time')
+    
+    for var in variables:
+        output_file = f'/climca/people/onennecke/not_debiased_data_future/{ESM}_{run}_{var}.nc'
+        if os.path.isfile( output_file ) == False:
+            
+            print(f'Processing variable: {var}')
+            path = f'/climca/data/CMIP6/{MIP}/{Inst}/{ESM}/{scenario}/{run}/{time_res}/{var}/{grid_def}/{version}/{var}_{time_res}_{ESM}_{scenario}_{run}_*'
+            files = [f for f in glob.glob(path) if f.endswith('.nc')]
+
+            nc = xr.open_mfdataset(files, preprocess=grid_func.preprocess)
+            nc = nc[[var]]
+            nc = nc.sel(time=nc.time.dt.year.isin(range(start_year, end_year + 1))) # Filter years
+            nc = grid_func.regrid(nc, s = 47, n = 56, w = 6, e = 16)  # Regrid the data
+            
+            nc = nc.drop_vars('height') if 'height' in nc.coords else nc
+            
+            if var == 'sfcWind':
+                nc = wind_model_func._wind_scale(nc, 100, alpha_mask['mask'], 10)
+            
+            if isinstance(nc.time.values[0], cftime.Datetime360Day):
+                print('Using 360-day calendar')
+                # Duplicate the 30th of the month for these months
+                extra_months = [4, 5, 6, 7, 8]
+
+                # Duplicate the dataset for these time points
+                duplicates = []
+                for m in extra_months:
+                    mask = (nc['time.month'] == m) & (nc['time.day'] == 30)
+                    ds_dup = nc.sel(time=nc.time[mask])
+                    duplicates.append(ds_dup)
+
+                # Put everything together and sort by time
+                nc = xr.concat([nc] + duplicates, dim='time').sortby('time')
+
+                nc = nc.assign_coords(time=new_time)  # Replace time coordinates with ERA5 time
+            elif isinstance(nc.time.values[0], cftime.DatetimeNoLeap):
+                print('Using no-leap calendar')
+                nc = nc.assign_coords(time=new_time)  # Ensure time coordinates are aligned
+            else:
+                print('Using standard calendar')
+                nc = nc.where(~((nc['time.month'] == 2) & (nc['time.day'] == 29)), drop=True)
+                nc = nc.assign_coords(time=new_time)  # Ensure time coordinates are aligned
+            
+            nc = nc.assign_coords(ESM=ESM)  # Assign ESM coordinate
+            nc = nc.assign_coords(run=run)  # Assign run coordinate
+            nc = nc.assign_coords(ESM_run=ESM_run)  # Assign ESM_run coordinate
+            
+            nc = nc.load()
+            
+            # Save the dataset
+            nc.to_netcdf(output_file)
+
+            print('Run time: ', int(np.floor((time.time()  - run_time) / 60)),'m', round((time.time()  - run_time) % 60,1),'s', '\n')
+            # return nc
+            # break
+    var = 'psl'
+
+    output_file = f'/climca/people/onennecke/not_debiased_data_future/{ESM}_{run}_{var}.nc'
+
+    if os.path.isfile( output_file ) == False:
+
+        run_time = time.time()
+
+        print(f'Processing variable: {var}')
+        path = f'/climca/data/CMIP6/{MIP}/{Inst}/{ESM}/{scenario}/{run}/{time_res}/{var}/{grid_def}/{version}/{var}_{time_res}_{ESM}_{scenario}_{run}_*'
+        files = [f for f in glob.glob(path) if f.endswith('.nc')]
+
+
+        nc = xr.open_mfdataset(files, preprocess=grid_func.preprocess_psl)
+        nc = nc[[var]]
+        nc = nc.sel(time=nc.time.dt.year.isin(range(start_year, end_year + 1))) # Filter years
+        nc = grid_func.regrid(nc, s = 30, n = 70, w = 340, e = 30)
+
+        nc = nc.drop_vars('height') if 'height' in nc.coords else nc
+
+        if isinstance(nc.time.values[0], cftime.Datetime360Day):
+            print('Using 360-day calendar')
+            # Duplicate the 30th of the month for these months
+            extra_months = [4, 5, 6, 7, 8]
+
+            # Duplicate the dataset for these time points
+            duplicates = []
+            for m in extra_months:
+                mask = (nc['time.month'] == m) & (nc['time.day'] == 30)
+                ds_dup = nc.sel(time=nc.time[mask])
+                duplicates.append(ds_dup)
+
+            # Put everything together and sort by time
+            nc = xr.concat([nc] + duplicates, dim='time').sortby('time')
+
+            nc = nc.assign_coords(time=new_time)  # Replace time coordinates with ERA5 time
+        elif isinstance(nc.time.values[0], cftime.DatetimeNoLeap):
+            print('Using no-leap calendar')
+            nc = nc.assign_coords(time=new_time)  # Ensure time coordinates are aligned
+        else:
+            print('Using standard calendar')
+            nc = nc.where(~((nc['time.month'] == 2) & (nc['time.day'] == 29)), drop=True)
+            nc = nc.assign_coords(time=new_time)  # Ensure time coordinates are aligned
+
+        nc = nc.assign_coords(ESM=ESM)  # Assign ESM coordinate
+        nc = nc.assign_coords(run=run)  # Assign run coordinate
+        nc = nc.assign_coords(ESM_run=ESM_run)  # Assign ESM_run coordinate
+        
+        nc = nc.load()
+
+        # Save the dataset
+        nc.to_netcdf(output_file)
+
+        print('Run time: ', int(np.floor((time.time()  - run_time) / 60)),'m', round((time.time()  - run_time) % 60,1),'s')
+
+for i in range(len(df)):
+    one_run(i)
+
+# p = multiprocessing.Pool(64)
+# p.map(one_run, range(len(df)))

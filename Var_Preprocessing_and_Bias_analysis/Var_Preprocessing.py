@@ -217,7 +217,7 @@ if os.path.isfile(output_file) == False:
 alpha_mask = xr.open_dataset('/home/onennecke/Capacity_data/alpha_land_sea.nc')
 
 # Read the dataframe from the csv file
-df = pd.read_csv('/home/onennecke/CMIP_models/CMIP6_runs.csv')
+df = pd.read_csv('/home/onennecke/CMIP_models/CMIP6_runs_future.csv')
 
 # Change the ref column to 1 for the first instance of each model
 df['Ref'] = df.groupby(['ESM', 'Institution']).cumcount().apply(lambda x: 1 if x == 0 else 0)
