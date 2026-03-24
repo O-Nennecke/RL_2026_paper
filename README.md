@@ -1,6 +1,6 @@
-# Master Thesis
+# RL paper
 
-This is the repository for the master thesis of Onno Nennecke
+This is the repository for the paper project of Onno Nennecke
 
 Title:
 
@@ -62,7 +62,7 @@ Institute for Meteorology
 
 ## Contact
 
-Onno Nennecke: [ae06ebug@studserv.uni-leipzig.de](ae06ebug@studserv.uni-leipzig.de)
+Onno Nennecke: [onno.nennecke@uni-leipzig.de](onno.nennecke@uni-leipzig.de)
 
 # License
 [MIT](https://github.com/O-Nennecke/master_thesis/blob/main/LICENSE)
