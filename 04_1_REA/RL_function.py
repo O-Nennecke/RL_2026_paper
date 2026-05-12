@@ -61,7 +61,7 @@ def main_observable(archive_path):
             ds = ds1 if var in fincl2 else ds2
             data = ds[[var]]
             nc = grid_func.regrid(data, s = 47, n = 56, w = 6, e = 16)
-            if var == 'sfcWind':
+            if var == 'U10':
                 nc = wind_model_func._wind_scale(nc, 100, alpha_mask['mask'], 10)
             nc = nc.rename({var: var_dict[var]})
             datasets.append(nc)
