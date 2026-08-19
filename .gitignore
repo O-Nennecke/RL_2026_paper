@@ -1,11 +1,12 @@
-02_Var_Preprocessing_and_Bias_analysis/log/
-02_Var_Preprocessing_and_Bias_analysis/bc_plots/
-02_Var_Preprocessing_and_Bias_analysis/Old_Code/
-02_Var_Preprocessing_and_Bias_analysis/Testing/
+02_Var_Preprocessing_and_analysis/log/
+02_Var_Preprocessing_and_analysis/bc_plots/
+02_Var_Preprocessing_and_analysis/Old_Code/
+02_Var_Preprocessing_and_analysis/Testing/
 X0_PP_Code/
 X1_Optional/
 X2_Old_Code/
 
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
